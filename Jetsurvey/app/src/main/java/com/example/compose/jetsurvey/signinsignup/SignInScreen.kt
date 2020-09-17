@@ -26,14 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -61,7 +54,7 @@ sealed class SignInEvent {
 @Composable
 fun SignIn(onNavigationEvent: (SignInEvent) -> Unit) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
     val snackbarErrorText = stringResource(id = R.string.feature_not_available)
@@ -89,7 +82,7 @@ fun SignIn(onNavigationEvent: (SignInEvent) -> Unit) {
                     TextButton(
                         onClick = {
                             scope.launch {
-                                snackbarHostState.showSnackbar(
+                                scaffoldState.snackbarHostState.showSnackbar(
                                     message = snackbarErrorText,
                                     actionLabel = snackbarActionLabel
                                 )
@@ -101,16 +94,17 @@ fun SignIn(onNavigationEvent: (SignInEvent) -> Unit) {
                     }
                 }
             }
+        },
+        snackbarHost = {
+            SnackbarHost(it) { data ->
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    snackbarData = data,
+                    actionColor = MaterialTheme.colors.snackbarAction
+                )
+            }
         }
     )
-
-    Stack(modifier = Modifier.fillMaxSize()) {
-        ErrorSnackbar(
-            snackbarHostState = snackbarHostState,
-            onDismiss = { snackbarHostState.currentSnackbarData?.dismiss() },
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-    }
 }
 
 @OptIn(ExperimentalFocus::class)
