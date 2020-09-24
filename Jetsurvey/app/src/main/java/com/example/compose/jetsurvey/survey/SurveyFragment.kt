@@ -16,7 +16,11 @@
 
 package com.example.compose.jetsurvey.survey
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -88,7 +92,23 @@ class SurveyFragment : Fragment() {
     }
 
     private fun takeAPhoto(questionId: Int) {
-        // unsupported for now
+        dispatchTakePictureIntent()
+    }
+
+    val REQUEST_IMAGE_CAPTURE = 1
+
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            viewModel.onPhotoTaken(10, imageBitmap)
+            //imageView.setImageBitmap(imageBitmap)
+        }
     }
 
     private fun selectContact(questionId: Int) {

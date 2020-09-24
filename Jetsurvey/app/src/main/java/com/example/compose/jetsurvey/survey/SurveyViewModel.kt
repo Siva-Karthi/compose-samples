@@ -16,6 +16,7 @@
 
 package com.example.compose.jetsurvey.survey
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -54,6 +55,10 @@ class SurveyViewModel(val surveyRepository: SurveyRepository) : ViewModel() {
 
     fun onDatePicked(questionId: Int, date: String) {
         updateStateWithActionResult(questionId, SurveyActionResult.Date(date))
+    }
+
+    fun onPhotoTaken(questionId: Int, bitmap: Bitmap){
+        updateStateWithActionResult(questionId, SurveyActionResult.Photo(bitmap))
     }
 
     private fun updateStateWithActionResult(questionId: Int, result: SurveyActionResult) {
